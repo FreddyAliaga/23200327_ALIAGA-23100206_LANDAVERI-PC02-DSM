@@ -1,8 +1,9 @@
-package pe.edu.esan.diarioespacial.data.remote
+﻿package pe.edu.esan.diarioespacial.data.remote
 
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import pe.edu.esan.diarioespacial.BuildConfig
+import pe.edu.esan.diarioespacial.data.remote.neows.NeoWsService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -28,8 +29,10 @@ object RetrofitInstance {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    //NeoWs - Asteroides (Alumno 2): agregar aquí su servicio, por ejemplo:
-    // val neoWsApi: NeoWsService by lazy { retrofit(NASA_BASE_URL).create(NeoWsService::class.java) }
+    //NeoWs - Asteroides (Alumno 2)
+    val neoWsApi: NeoWsService by lazy {
+        retrofit(NASA_BASE_URL).create(NeoWsService::class.java)
+    }
 
     //APOD - Imágenes (Alumno 1): agregar aquí su servicio, por ejemplo:
     // val apodApi: ApodService by lazy { retrofit(SCIENCE_BASE_URL).create(ApodService::class.java) }
