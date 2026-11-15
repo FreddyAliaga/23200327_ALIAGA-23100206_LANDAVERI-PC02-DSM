@@ -1,4 +1,4 @@
-package pe.edu.esan.diarioespacial.presentation.navigation
+﻿package pe.edu.esan.diarioespacial.presentation.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -12,13 +12,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import pe.edu.esan.diarioespacial.presentation.asteroids.AsteroidDetailScreen
+import pe.edu.esan.diarioespacial.presentation.asteroids.AsteroidListScreen
+import pe.edu.esan.diarioespacial.presentation.asteroids.AsteroidViewModel
+import pe.edu.esan.diarioespacial.presentation.asteroids.FavoriteAsteroidsScreen
 import pe.edu.esan.diarioespacial.presentation.images.ImagesPlaceholderScreen
 
 // BASE COMÚN: navegación principal con barra inferior (Imágenes y Asteroides).
@@ -28,6 +32,8 @@ fun AppNavGraph() {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route ?: ""
+    //Alumno 2: un solo ViewModel para la lista, el detalle y "Mis asteroides"
+    val asteroidViewModel: AsteroidViewModel = viewModel()
 
     Scaffold(
         bottomBar = {
@@ -59,14 +65,34 @@ fun AppNavGraph() {
 
             //Asteroides - NeoWs (Alumno 2)
             navigation(startDestination = "asteroides/lista", route = "asteroides") {
-                composable("asteroides/lista") { Text("Próximamente: asteroides cercanos (NeoWs).") }
+                composable("asteroides/lista") {
+                    AsteroidListScreen(
+                        viewModel = asteroidViewModel,
+                        onOpenDetail = { id -> navController.navigate("asteroides/detalle/$id") },
+                        onOpenFavorites = { navController.navigate("asteroides/favoritos") }
+                    )
+                }
+                composable("asteroides/detalle/{id}") { entry ->
+                    AsteroidDetailScreen(
+                        viewModel = asteroidViewModel,
+                        asteroidId = entry.arguments?.getString("id") ?: "",
+                        onBack = { navController.popBackStack() }
+                    )
+                }
+                composable("asteroides/favoritos") {
+                    FavoriteAsteroidsScreen(
+                        viewModel = asteroidViewModel,
+                        onOpenDetail = { id -> navController.navigate("asteroides/detalle/$id") },
+                        onBack = { navController.popBackStack() }
+                    )
+                }
             }
         }
     }
 }
 
 // Cambia de pestaña sin apilar pantallas y recordando dónde se quedó cada opción
-private fun NavController.navigateToTab(route: String) {
+private fun androidx.navigation.NavController.navigateToTab(route: String) {
     navigate(route) {
         popUpTo(graph.findStartDestination().id) { saveState = true }
         launchSingleTop = true
