@@ -3,6 +3,7 @@
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import pe.edu.esan.diarioespacial.BuildConfig
+import pe.edu.esan.diarioespacial.data.remote.apod.ApodService
 import pe.edu.esan.diarioespacial.data.remote.neows.NeoWsService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -34,6 +35,8 @@ object RetrofitInstance {
         retrofit(NASA_BASE_URL).create(NeoWsService::class.java)
     }
 
-    //APOD - Imágenes (Alumno 1): agregar aquí su servicio, por ejemplo:
-    // val apodApi: ApodService by lazy { retrofit(SCIENCE_BASE_URL).create(ApodService::class.java) }
+    //APOD - Imágenes (Alumno 1)
+    val apodApi: ApodService by lazy {
+        retrofit(SCIENCE_BASE_URL).create(ApodService::class.java)
+    }
 }
