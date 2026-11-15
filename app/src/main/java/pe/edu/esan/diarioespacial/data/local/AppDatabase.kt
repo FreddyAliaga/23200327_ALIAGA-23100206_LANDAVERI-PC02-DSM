@@ -6,11 +6,13 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 // BASE COMÚN: una sola base de datos para las dos opciones (ver README).
-// Alumno 1: agregar ApodEntity::class en entities, su DAO abajo y subir version a 2.
-@Database(entities = [AsteroidEntity::class], version = 1, exportSchema = false)
+// Versión 2: se agregó la tabla de imágenes (Alumno 1).
+@Database(entities = [AsteroidEntity::class, ApodEntity::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun asteroidDao(): AsteroidDao
+
+    abstract fun apodDao(): ApodDao
 
     companion object {
         @Volatile
