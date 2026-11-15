@@ -23,7 +23,10 @@ import pe.edu.esan.diarioespacial.presentation.asteroids.AsteroidDetailScreen
 import pe.edu.esan.diarioespacial.presentation.asteroids.AsteroidListScreen
 import pe.edu.esan.diarioespacial.presentation.asteroids.AsteroidViewModel
 import pe.edu.esan.diarioespacial.presentation.asteroids.FavoriteAsteroidsScreen
-import pe.edu.esan.diarioespacial.presentation.images.ImagesPlaceholderScreen
+import pe.edu.esan.diarioespacial.presentation.images.ApodDetailScreen
+import pe.edu.esan.diarioespacial.presentation.images.ApodListScreen
+import pe.edu.esan.diarioespacial.presentation.images.ApodViewModel
+import pe.edu.esan.diarioespacial.presentation.images.FavoriteApodScreen
 
 // BASE COMÚN: navegación principal con barra inferior (Imágenes y Asteroides).
 // Cada opción tiene su propio grafo interno: "imagenes/..." (Alumno 1) y "asteroides/..." (Alumno 2).
@@ -32,6 +35,8 @@ fun AppNavGraph() {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route ?: ""
+    //Alumno 1: un solo ViewModel para la lista, el detalle y "Mis imágenes favoritas"
+    val apodViewModel: ApodViewModel = viewModel()
     //Alumno 2: un solo ViewModel para la lista, el detalle y "Mis asteroides"
     val asteroidViewModel: AsteroidViewModel = viewModel()
 
@@ -60,7 +65,27 @@ fun AppNavGraph() {
         ) {
             //Imágenes - APOD (Alumno 1)
             navigation(startDestination = "imagenes/lista", route = "imagenes") {
-                composable("imagenes/lista") { ImagesPlaceholderScreen() }
+                composable("imagenes/lista") {
+                    ApodListScreen(
+                        viewModel = apodViewModel,
+                        onOpenDetail = { date -> navController.navigate("imagenes/detalle/$date") },
+                        onOpenFavorites = { navController.navigate("imagenes/favoritas") }
+                    )
+                }
+                composable("imagenes/detalle/{date}") { entry ->
+                    ApodDetailScreen(
+                        viewModel = apodViewModel,
+                        date = entry.arguments?.getString("date") ?: "",
+                        onBack = { navController.popBackStack() }
+                    )
+                }
+                composable("imagenes/favoritas") {
+                    FavoriteApodScreen(
+                        viewModel = apodViewModel,
+                        onOpenDetail = { date -> navController.navigate("imagenes/detalle/$date") },
+                        onBack = { navController.popBackStack() }
+                    )
+                }
             }
 
             //Asteroides - NeoWs (Alumno 2)
