@@ -1,8 +1,14 @@
+import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
 }
 
+// La clave de la NASA se lee de local.properties (ese archivo NO se sube a GitHub)
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
 android {
     namespace = "pe.edu.esan.diarioespacial"
     compileSdk {
@@ -17,6 +23,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        //Clave de la API de la NASA -> BuildConfig.NASA_API_KEY
+        buildConfigField("String", "NASA_API_KEY", "\"${localProperties.getProperty("NASA_API_KEY", "")}\"")
     }
 
     buildTypes {
@@ -32,6 +41,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
